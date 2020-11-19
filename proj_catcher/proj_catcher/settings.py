@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'proj_catcher.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',    # PostgreSQL
-        'NAME': 'LINEUSER',                           # 資料庫名稱
+        'NAME': 'line_catcher',                       # 資料庫名稱
         'USER': 'postgres',                           # 資料庫帳號
         'PASSWORD': 'abc123',                         # 資料庫密碼
         'HOST': 'localhost',                          # Server位址

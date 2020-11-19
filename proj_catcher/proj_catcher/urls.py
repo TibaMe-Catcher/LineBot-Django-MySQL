@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url
+from app_catcher import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    url('^callback', views.callback),    # 設定"首頁網址/callback"，就會執行<view.py>中callback函式
+    path('admin/', admin.site.urls),     # 127.0.0.1:8000/admin/ → Djando後台
 ]
