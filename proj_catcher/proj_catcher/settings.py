@@ -23,11 +23,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '0k(+o+$x+_z=##98e%p=rg_w-e4a*^z8!wozs4j04k-!fm)59t'
 LINE_CHANNEL_ACCESS_TOKEN = '5OQCbYkWDRxhEfVCCdNwQGdIog3Rw5eNlmxeKvld7StiWM8GhWtAYbwieZkDmUsficF2TuxsX8CBtj14N0KrlOB5nz7a43SqhQMQRTFjxA0iOklTCjkLPyEBZPa/fSZIWBTEbU8bmrsriLncamx+3gdB04t89/1O/w1cDnyilFU='
 LINE_CHANNEL_SECRET = 'b985771c82621dcd4f177dae117889a9'
+# imgur key
+client_id = 'e37cd8b1b19be88'
+client_secret = '69a4b60f4091b74908a505a92171b1a9aacee2aa'
+album_id = 'a/49jPV88'
+access_token = '8058de90ae5ffd1a3c5a5273df0734e09067edec'    # 一個月過期
+refresh_token = 'f98830c89d57f62a74473f2a33141eb8bfea668d'   # 不會過期，不過每次都會回傳新的
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['65c6ced2ef40.ap.ngrok.io']    # 如果用ngrok，要將網域放進這裡面'f6089e312623.ngrok.io'
 
 
 # Application definition

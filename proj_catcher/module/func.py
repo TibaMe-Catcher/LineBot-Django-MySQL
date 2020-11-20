@@ -1,7 +1,7 @@
 from django.conf import settings
 
 from linebot import LineBotApi
-from linebot.models import TextSendMessage, ImageSendMessage, LocationSendMessage, TemplateSendMessage
+from linebot.models import (TextSendMessage, ImageSendMessage, LocationSendMessage, TemplateSendMessage, ImagemapSendMessage)
 
 from app_catcher.models import users
 
@@ -11,7 +11,7 @@ def sendText1(event):
     ''' @Hey, Catcher@ 收集自拍照，之後要呼叫情緒臉辨識的演算法進行分析 '''
     try:
         text01 = '今天過得好嗎? \n拍張自拍照讓我瞧瞧你現在的狀態吧~'
-        message = TextSendMessage(text = text1)
+        message = TextSendMessage(text = text01)
         line_bot_api.reply_message(event.reply_token, message)
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤！\n聯絡我感恩!'))
@@ -27,12 +27,12 @@ def sendText2(event):
     try:
         message = [
             TextSendMessage(  
-            text = "Hola ~~\n\n我是Catcher，很高興認識你~\n\n" +
+            text = "Hola ~~\n我是Catcher，很高興認識你~\n\n" +
                    "下方菜單欄中有需多小功能，有時間都可以嘗試看看喔~\n\n" +
-                   " '我的頭像'：拍個自拍照\n\n" +
-                   " '心心日記'：寫下今天的心情日記或是趣事雜記\n\n" +
-                   " '健康檢測'：做個心理健康評估\n\n" +
-                   " '心情回顧'：回顧一周的心情天氣\n\n" + 
+                   " '我的頭像'：拍個自拍照\n" +
+                   " '心心日記'：寫下今天的心情日記或是趣事雜記\n" +
+                   " '健康檢測'：做個心理健康評估\n" +
+                   " '心情回顧'：回顧一周的心情天氣\n" + 
                    " '小小驚喜'：點擊看看就知道了 >u<\n")
             ]
         line_bot_api.reply_message(event.reply_token,message)
@@ -44,8 +44,8 @@ def sendText2(event):
 def sendText3(event):
     ''' @心情日記@ '''
     try:
-        text01 = '紀錄一下今天發生的事，\n以及你的心情吧~~'
-        message = TextSendMessage(text = text1)
+        text02 = '紀錄一下今天發生的事，\n以及你的心情吧~~'
+        message = TextSendMessage(text = text02)
         line_bot_api.reply_message(event.reply_token, message)
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤！\n聯絡我感恩!'))
