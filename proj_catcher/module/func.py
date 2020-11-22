@@ -1,8 +1,9 @@
 from django.conf import settings
 
 from linebot import LineBotApi
-from linebot.models import (TextSendMessage, ImageSendMessage, LocationSendMessage, TemplateSendMessage, ImagemapSendMessage)
+from linebot.models import *
 
+import http.client, json
 from app_catcher.models import users
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)

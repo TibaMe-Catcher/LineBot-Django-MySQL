@@ -22,4 +22,5 @@ urlpatterns = [
     url('^callback', views.callback),    # 設定"首頁網址/callback"，就會執行<view.py>中callback函式
     path('admin/', admin.site.urls),     # 127.0.0.1:8000/admin/ → Djando後台
     path('app_catcher/', include('app_catcher.urls')),    # ngrok網址 + /app_catcher/callback
+
 ]

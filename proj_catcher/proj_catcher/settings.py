@@ -23,17 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = ''
 LINE_CHANNEL_ACCESS_TOKEN = ''
 LINE_CHANNEL_SECRET = ''
-# imgur key
-client_id = ''
-client_secret = ''
-album_id = ''
-access_token = ''    # 一個月過期
-refresh_token = ''   # 不會過期，不過每次都會回傳新的
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*','.ap.ngrok.io']    # 如果用ngrok，要將網域放進這裡面'f6089e312623.ngrok.io'
+
 
 
 # Application definition
