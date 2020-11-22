@@ -1,18 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render               # Django 模組
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
-from linebot.models import *    # 含入LINE Bot所使用的事件模組
+from linebot.models import *                       # LINE Bot 模組
+from linebot.models.template import *
 
-from imgurpython import ImgurClient
-from imgurpython.helpers.error import ImgurClientError
+#from imgurpython import ImgurClient               # 好像不需要用到Imgur，若之後有需要回傳圖片給User，再導入此段
+#from imgurpython.helpers.error import ImgurClientError
 
-import os, tempfile, datetime, errno, json, sys
-from PIL import Image
+import os, tempfile, datetime, errno, json, sys    # 常用的模組
+from PIL import Image, ImageDraw                   # 圖片及臉部辨識模組
 from io import BytesIO
+#from azure.cognitiveservices.vision.face import FaceClient
+#from msrest.authentication import CognitiveServicesCredentials
 
 from .models import users
 from module import func
@@ -21,18 +24,7 @@ from module import func
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(settings.LINE_CHANNEL_SECRET)
 
-static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
-# function for create tmp dir for download content
-def make_static_tmp_dir():
-    try:
-        os.makedirs(static_tmp_path)
-    except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(static_tmp_path):
-            pass
-        else:
-            raise
-
-##### 建立 callback 函式，使用者呼叫 "首頁網址/callback" 就會執行此函式
+##### 建立 callback 函式，使用者呼叫 "首頁網址/callback" 就會執行此函式 #####
 @csrf_exempt
 def callback(request):
     '''監聽所有來自/callback的POST request'''
@@ -46,24 +38,13 @@ def callback(request):
             return HttpResponseBadRequest
         return HttpResponse('OK')
         
-        
-        
-        
-'''
-       for event in events:
-            if isinstance(event, MessageEvent):       # 如果有訊息事件，就發生以下的....
-                
-                ##### 若使用者第一次使用，會記錄他的 Line ID #####
-                user_id = event.source.user_id
-                if not (users.objects.filter(uid=user_id).exists()):
-                    unit = users.objects.create(uid=user_id)
-                    unit.save()
-                
-        return HttpResponse()
-    else:
-        return HttpResponseBadRequest()
-'''
-
+##### 取得User ID，若尚未存入資料庫就儲存 #####        
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    userId = line_bot_api.get_profile(event.source.user_id)
+    if not (users.objects.filter(uid=userId).exists()):
+        unit = users.objects.create(uid=userId)
+        unit.save()
 
 
 
@@ -72,7 +53,7 @@ def handle_text_message(event):
     if isinstance(event.message, TextMessage):
         text = event.message.text
         if text == '@Hey, Catcher@':   # 點擊圖文選單，出現@Hey, Catcher@ → 回傳關心用語01 → 要自拍照  (儲存方式要再想)
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='今天過得好嗎? \n拍張自拍照讓我瞧瞧你現在的狀態吧~'))
+            # line_bot_api.reply_message(event.reply_token, TextSendMessage(text='今天過得好嗎? \n拍張自拍照讓我瞧瞧你現在的狀態吧~'))
             func.sendText1(event)
         elif mtext == '@使用說明@':      # 點擊圖文選單，出現@使用說明@     → 回傳使用說明的對話框
             func.sendText2(event)
@@ -84,51 +65,58 @@ def handle_text_message(event):
             pass
         elif mtext == '@小小驚喜@':      # 點擊圖文選單，出現@小小驚喜@     → 回傳好聽的音樂或是美食資訊
             pass
-
-
-
+"""
+@handler.add(MessageEvent, message=TextMessage)    # 這一段是抄老師的保存客戶文字，但部署的需求不太一樣，要再研究
+def process_text_message(event):
+    '''
+    handler處理文字消息，收到用戶回應的文字消息後
+    將文字消息內容往素材資料夾中儲存，找尋以該內容命名的資料夾，讀取reply.json
+    轉譯為json後，將消息回傳給用戶
+    '''
+    try:
+        result_message_array = []         # 讀取本地的檔案，並轉譯成消息
+        replyJsonPath = 'material/' + event.message.text + 'reply.json'
+        result_message_array = detect_json_array_to_new_message_array(replyJsonPath)
+        line_bot_api.reply_message(event.reply_token, result_message_array)
+    except FileNotFoundError as e:
+        print('File not found!!!!!')
+    with db:
+        TextMessageTable.create(
+            replyToken.reply_token,
+            timestamp = event.timestamp,
+            userId = event.source.user_id,
+            messageId = event.message.id,
+            messageType = event.message.type,
+            messageText = event.message.text
+        )
+"""
+'''
+# Create an authenticated FaceClient.
+KEY = secretFileContentJson.get("azure_key_1")
+ENDPOINT = secretFileContentJson.get("azure_face_detect_endpoint")
+face_client = FaceClient(ENDPOINT, CognitiveServicesCredentials(KEY))
+'''
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
 
-    if isinstance(event.message, ImageMessage):  # 若訊息是圖片，則執行以下的操作
+    if isinstance(event.message, ImageMessage):      # 若訊息是圖片，則執行以下的操作
         message_content = line_bot_api.get_message_content(event.message.id)
-        '''
-        ext = 'jpg'        
-        with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
-            for chunk in message_content.iter_content():
-                tf.write(chunk)
-            tempfile_path = tf.name
 
-        dist_path = tempfile_path + '.' + ext
-        dist_name = os.path.basename(dist_path)
-        os.rename(tempfile_path, dist_path)
-        '''
         i = Image.open(BytesIO(message_content.content))
-        filename = './images/' + event.message.id +'.jpg'
+        filename = './images/' + userId + event.message.id +'.jpg'
         i.save(filename)
-        message = TextSendMessage(text='成功儲存')
-        line_bot_api.reply_message(event.reply_token, message)
-        
-'''
-        # 上傳照片到Imgur
-        try:
-            client = ImgurClient(settings.client_id, settings.client_secret, settings.access_token, settings.refresh_token)
-            print(settings.client_id, settings.client_secret, settings.access_token, settings.refresh_token)
-            config = {
-                'album': settings.album_id,
-                'name': 'catcher',
-                'title': 'catcher',
-                'description': '????line bot'
-            }
-            path = os.path.join('static', 'tmp', dist_name)
-            client.upload_from_path(path, config=config, anon=False)
-            os.remove(path)
-            print(path)
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='收到照片囉~'))
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='我沒收到(〒︿〒)，\n請再傳一次，謝謝'))
-  '''      
 
-        
+        """
+        # 偵測臉部，這段式抄寫老師的code，老師導入的是azure的模型
+        detected_faces = face_client.face.detect_with_stream(BytesIO(message_content.content))
+        if not detected_faces:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="找不到臉...."))
+            raise Exception('No face detected from image...')
+
+
+        """
+        message = TextSendMessage(text='成功儲存')    # 成功儲存圖片回傳訊息給使用者
+        line_bot_api.reply_message(event.reply_token, message)
+
         
