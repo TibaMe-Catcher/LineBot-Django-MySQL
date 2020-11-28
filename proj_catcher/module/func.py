@@ -4,7 +4,7 @@ from linebot import LineBotApi
 from linebot.models import *
 
 import http.client, json
-from app_catcher.models import users
+from app_catcher.models import *
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 
@@ -30,8 +30,8 @@ def sendText2(event):
             TextSendMessage(  
             text = "Hola ~~\n我是Catcher，很高興認識你~\n\n" +
                    "下方菜單欄中有需多小功能，有時間都可以嘗試看看喔~\n\n" +
-                   " '我的頭像'：拍個自拍照\n" +
-                   " '心心日記'：寫下今天的心情日記或是趣事雜記\n" +
+                   " '我的頭像'：拍個自拍照，讓我瞧瞧現在的你\n" +
+                   " '心情日記'：寫下今天的日記或是趣事雜記吧\n" +
                    " '健康檢測'：做個心理健康評估\n" +
                    " '心情回顧'：回顧一周的心情天氣\n" + 
                    " '小小驚喜'：點擊看看就知道了 >u<\n")
@@ -45,7 +45,7 @@ def sendText2(event):
 def sendText3(event):
     ''' @心情日記@ '''
     try:
-        text02 = '紀錄一下今天發生的事，\n以及你的心情吧~~'
+        text02 = '跟我說說~~\n今天發生了哪些事情，和你當時的心情~~'
         message = TextSendMessage(text = text02)
         line_bot_api.reply_message(event.reply_token, message)
     except:
