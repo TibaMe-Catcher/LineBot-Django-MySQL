@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# 上載之前記得改成這種空白的密碼
 SECRET_KEY = ''
 LINE_CHANNEL_ACCESS_TOKEN = ''
 LINE_CHANNEL_SECRET = ''
@@ -46,7 +46,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-#    'django.middleware.locale.LocaleMiddleware'              # 確保使用自己想要的語言(一定要放在這個位置)，擋掉後可以正常運作
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -80,12 +79,12 @@ WSGI_APPLICATION = 'proj_catcher.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',    # PostgreSQL
+        'ENGINE': 'django.db.backends.mysql',         # MySQL
         'NAME': 'line_catcher',                       # 資料庫名稱
-        'USER': 'postgres',                           # 資料庫帳號
+        'USER': 'root',                               # 資料庫帳號
         'PASSWORD': 'abc123',                         # 資料庫密碼
-        'HOST': 'localhost',                          # Server位址
-        'POST': '5432',                               # PostgreSQL Port號
+        'HOST': '127.0.0.1',                          # Server位址
+        'POST': '3306',                               # MySQL Port號
     }
 }
 
