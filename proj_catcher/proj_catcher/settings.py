@@ -84,7 +84,7 @@ DATABASES = {
         'USER': 'root',                               # 資料庫帳號
         'PASSWORD': 'abc123',                         # 資料庫密碼
         'HOST': '127.0.0.1',                          # Server位址
-        'POST': '3306',                               # MySQL Port號
+        'PORT': '3306',                               # MySQL Port號
     }
 }
 
