@@ -81,8 +81,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',         # MySQL
         'NAME': 'line_catcher',                       # 資料庫名稱
-        'USER': 'root',                               # 資料庫帳號
-        'PASSWORD': 'abc123',                         # 資料庫密碼
+        'USER': '',                                   # 資料庫帳號
+        'PASSWORD': '',                               # 資料庫密碼
         'HOST': '127.0.0.1',                          # Server位址
         'PORT': '3306',                               # MySQL Port號
     }
